@@ -1,2 +1,2 @@
 # promemory
-test deploy by jenkins
+test deploy by jenkins - 02
