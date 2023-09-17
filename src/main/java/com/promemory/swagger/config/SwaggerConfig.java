@@ -14,7 +14,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-                .title("Promemory API docs")
+                .title("Promemory API docs 001")
                 .description("비사이드 포텐데이 309 promemory")
                 .version("v1.0.0");
 
