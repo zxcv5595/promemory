@@ -36,7 +36,8 @@ public class SecurityConfig {
                         authorizeRequests.requestMatchers(
                                 // -- Swagger UI v3 (OpenAPI)
                                 "/v3/api-docs/**",
-                                "/swagger-ui/**"
+                                "/swagger-ui/**",
+                                "/health"
                         ).permitAll()
                 )
                 .build();
