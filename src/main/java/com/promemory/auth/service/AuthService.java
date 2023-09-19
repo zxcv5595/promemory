@@ -2,6 +2,7 @@ package com.promemory.auth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promemory.auth.dto.KakaoLoginResponse;
 import com.promemory.auth.openfeign.KakaoApiClient;
 import com.promemory.auth.openfeign.KakaoAuthClient;
 import com.promemory.auth.openfeign.dto.KakaoProfile;
@@ -51,14 +52,15 @@ public class AuthService {
         return objectMapper.readValue(response.getBody(), KakaoProfile.class);
     }
 
-    public String kakaoLogin(KakaoProfile kakaoProfile) {
+    public KakaoLoginResponse kakaoLogin(KakaoProfile kakaoProfile) {
         String memberEmail = kakaoProfile.kakao_account.email;
 
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseGet(() -> kakaoSignUp(kakaoProfile));
 
-        return tokenProvider.generateToken(member.getEmail(), member.getId(), member.getRole());
+        String token = tokenProvider.generateToken(member.getEmail(), member.getId(), member.getRole());
 
+        return KakaoLoginResponse.from(member, token);
     }
 
     public Member kakaoSignUp(KakaoProfile kakaoProfile) {
@@ -67,6 +69,7 @@ public class AuthService {
                 .nickname(kakaoProfile.properties.nickname)
                 .profileImg(kakaoProfile.properties.profile_image)
                 .role(Role.ROLE_USER)
+                .isFirst(true)
                 .build();
 
         return memberRepository.save(member);

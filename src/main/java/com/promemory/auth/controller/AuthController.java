@@ -1,6 +1,7 @@
 package com.promemory.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.promemory.auth.dto.KakaoLoginResponse;
 import com.promemory.auth.openfeign.dto.KakaoProfile;
 import com.promemory.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +26,7 @@ public class AuthController {
 
                     """)
     @GetMapping("/auth/kakao/callback")
-    public String kakaoCallback(@Parameter String code) throws JsonProcessingException {
+    public KakaoLoginResponse kakaoCallback(@Parameter String code) throws JsonProcessingException {
 
         String kakaoToken = authService.getKakaoToken(code);
         KakaoProfile kakaoProfile = authService.getKakaoProfile(kakaoToken);
