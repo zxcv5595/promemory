@@ -17,6 +17,9 @@ public class KakaoLoginResponse {
     @Schema(description = "카카오 닉네임", defaultValue = "이창호")
     private String nickname;
 
+    @Schema(description = "카카오 프로필 사진", defaultValue = "사진 URL")
+    private String profileImg;
+
     @Schema(description = "첫 회원 여부 (true - 첫 회원)", defaultValue = "true", allowableValues = {"true", "false"})
     private boolean isFirst;
 
@@ -26,6 +29,7 @@ public class KakaoLoginResponse {
     public static KakaoLoginResponse from(Member member, String jwt) {
         return KakaoLoginResponse.builder()
                 .nickname(member.getNickname())
+                .profileImg(member.getProfileImg())
                 .isFirst(member.isFirst())
                 .jwt(jwt)
                 .build();
