@@ -35,7 +35,7 @@ public class AuthController {
                     first 값이 true이면 첫 회원임을 의미함
 
                     """,  responses = {
-        @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
+        @ApiResponse(responseCode = "200", description = "로그인 및 회원가입 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
         @ApiResponse(responseCode = "403", description = "email 제공 거부 시", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
 
