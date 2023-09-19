@@ -4,14 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.promemory.auth.dto.KakaoLoginResponse;
 import com.promemory.auth.openfeign.dto.KakaoProfile;
 import com.promemory.auth.service.AuthService;
+import com.promemory.global.exception.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Kakao 로그인 및 회원가입", description = "카카오 로그인 요청주소로 연결하면, 로그인 및 회원가입이 진행됩니다. [slack] DM으로 파일 첨부")
 public class AuthController {
 
     private final AuthService authService;
@@ -24,12 +32,18 @@ public class AuthController {
 
                     회원이 아닌 유저는 회원가입되고 jwt값을 리턴해줌
 
-                    """)
-    @GetMapping("/auth/kakao/callback")
-    public KakaoLoginResponse kakaoCallback(@Parameter String code) throws JsonProcessingException {
+                    """,  responses = {
+        @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
+        @ApiResponse(responseCode = "403", description = "email 제공 거부 시", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+
+    @GetMapping(value = "/auth/kakao/callback", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<KakaoLoginResponse> kakaoCallback(@Parameter String code) throws JsonProcessingException {
 
         String kakaoToken = authService.getKakaoToken(code);
         KakaoProfile kakaoProfile = authService.getKakaoProfile(kakaoToken);
-        return authService.kakaoLogin(kakaoProfile);
+        KakaoLoginResponse kakaoLoginResponse = authService.kakaoLogin(kakaoProfile);
+
+        return ResponseEntity.ok(kakaoLoginResponse);
     }
 }
