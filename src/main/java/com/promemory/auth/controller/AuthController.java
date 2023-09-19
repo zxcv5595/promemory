@@ -28,9 +28,11 @@ public class AuthController {
             description = """
                     카카오로부터 code와 access token을 받아 사용자 정보를 받아오고, 이 정보로 로그인 또는 회원가입 진행
 
-                    jwt값을 리턴해주며, 회원전용 서비스를 사용할 때 사용됨
+                    jwt값, 닉네임, 첫 회원 여부를 리턴해주며, 회원전용 서비스를 사용할 때 사용됨
 
-                    회원이 아닌 유저는 회원가입되고 jwt값을 리턴해줌
+                    회원이 아닌 유저는 회원가입이 자동으로 완료 되고 jwt값을 리턴해줌
+                    
+                    first 값이 true이면 첫 회원임을 의미함
 
                     """,  responses = {
         @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
