@@ -1,10 +1,10 @@
-package com.promemory;
+package com.promemory.global.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Controller {
+public class GlobalController {
 
     @GetMapping("/health")
     public String health(){
