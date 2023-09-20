@@ -1,5 +1,6 @@
 package com.promemory.member.entity;
 
+import com.promemory.global.entity.BaseEntity;
 import com.promemory.member.type.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +43,7 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void setFirst(boolean isFirst){
+    public void setFirst(boolean isFirst) {
         this.isFirst = isFirst;
     }
 
