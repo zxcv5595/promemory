@@ -1,7 +1,9 @@
 package com.promemory.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,17 +26,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            FilterChain filterChain) throws IOException {
 
-        String token = resolveTokenFromRequest(request);
+        try {
+            String token = resolveTokenFromRequest(request);
 
-        if (token != null && tokenProvider.validateToken(token)) {
-            Authentication auth = tokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            if (token != null && tokenProvider.validateToken(token)) {
+                Authentication auth = tokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-            log.info("'{}' -> {}", tokenProvider.getUsername(token), request.getRequestURI());
+                log.info("'{}' -> {}", tokenProvider.getUsername(token), request.getRequestURI());
+
+            }
+            filterChain.doFilter(request, response);
+        } catch (SignatureException | MalformedJwtException e) {
+            (response).sendError(401, "변조된 토큰 입니다.");
+        } catch (ExpiredJwtException e) {
+            (response).sendError(401, "만료된 토큰 입니다.");
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
         }
-        filterChain.doFilter(request, response);
     }
 
     private String resolveTokenFromRequest(HttpServletRequest request) {
