@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class AuthService {
     @Value("${auth.kakao.grantType}")
     private String kakaoGrantType;
 
+    @Transactional
     public String getKakaoToken(String code) throws JsonProcessingException {
         ResponseEntity<String> response = kakaoAuthClient.getToken(kakaoClientId, kakaoRedirectUri,
                 kakaoGrantType, code);
@@ -44,6 +46,7 @@ public class AuthService {
         return kakaoTokenResponse.getAccess_token();
     }
 
+    @Transactional
     public KakaoProfile getKakaoProfile(String accessToken)
             throws JsonProcessingException {
         String authorization = "Bearer " + accessToken;
@@ -52,6 +55,7 @@ public class AuthService {
         return objectMapper.readValue(response.getBody(), KakaoProfile.class);
     }
 
+    @Transactional
     public KakaoLoginResponse kakaoLogin(KakaoProfile kakaoProfile) {
         String memberEmail = kakaoProfile.kakao_account.email;
 
@@ -63,6 +67,7 @@ public class AuthService {
         return KakaoLoginResponse.from(member, token);
     }
 
+    @Transactional
     public Member kakaoSignUp(KakaoProfile kakaoProfile) {
         Member member = Member.builder()
                 .email(kakaoProfile.kakao_account.email)

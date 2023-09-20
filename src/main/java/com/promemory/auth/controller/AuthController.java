@@ -6,7 +6,6 @@ import com.promemory.auth.openfeign.dto.KakaoProfile;
 import com.promemory.auth.service.AuthService;
 import com.promemory.global.exception.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,16 +31,17 @@ public class AuthController {
                     jwt값, 닉네임, 프로필 사진 그리고 첫 회원 여부를 리턴해주며, 회원전용 서비스를 사용할 때 사용됨
 
                     회원이 아닌 유저는 회원가입이 자동으로 완료 되고 jwt값을 리턴해줌
-                    
+                                        
                     first 값이 true이면 첫 회원임을 의미함
 
-                    """,  responses = {
-        @ApiResponse(responseCode = "200", description = "로그인 및 회원가입 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
-        @ApiResponse(responseCode = "403", description = "email 제공 거부 시", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    """, responses = {
+            @ApiResponse(responseCode = "200", description = "로그인 및 회원가입 성공", content = @Content(schema = @Schema(implementation = KakaoLoginResponse.class))),
+            @ApiResponse(responseCode = "403", description = "email 제공 거부 시", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
 
     @GetMapping(value = "/auth/kakao/callback", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<KakaoLoginResponse> kakaoCallback(@Parameter String code) throws JsonProcessingException {
+    public ResponseEntity<KakaoLoginResponse> kakaoCallback(@RequestParam String code)
+            throws JsonProcessingException {
 
         String kakaoToken = authService.getKakaoToken(code);
         KakaoProfile kakaoProfile = authService.getKakaoProfile(kakaoToken);
