@@ -34,8 +34,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/auth/kakao/callback"
                                 ).permitAll()
-
-                )
+                                .anyRequest().authenticated())
                 .build();
 
     }

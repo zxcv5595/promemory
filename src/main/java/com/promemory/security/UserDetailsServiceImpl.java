@@ -22,6 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new CustomException(
                         ErrorCode.NOT_FOUND_USER));
 
-        return new UserDetailsImpl(member);
+        return new CustomUserDetails(member);
     }
 }

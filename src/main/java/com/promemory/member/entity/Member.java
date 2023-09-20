@@ -38,4 +38,12 @@ public class Member {
 
     private boolean isFirst;
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setFirst(boolean isFirst){
+        this.isFirst = isFirst;
+    }
+
 }
