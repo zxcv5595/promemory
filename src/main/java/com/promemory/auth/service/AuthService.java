@@ -36,7 +36,25 @@ public class AuthService {
     private String kakaoGrantType;
 
     @Transactional
-    public String getKakaoToken(String code) throws JsonProcessingException {
+    public KakaoLoginResponse kakaoLogin(String code)
+            throws JsonProcessingException {
+
+        String kakaoToken = getKakaoToken(code);
+
+        KakaoProfile kakaoProfile = getKakaoProfile(kakaoToken);
+
+        String memberEmail = kakaoProfile.kakao_account.email;
+
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseGet(() -> kakaoSignUp(kakaoProfile));
+
+        String token = tokenProvider.generateToken(member.getEmail(), member.getId(),
+                member.getRole());
+
+        return KakaoLoginResponse.from(member, token);
+    }
+
+    private String getKakaoToken(String code) throws JsonProcessingException {
         ResponseEntity<String> response = kakaoAuthClient.getToken(kakaoClientId, kakaoRedirectUri,
                 kakaoGrantType, code);
 
@@ -46,8 +64,7 @@ public class AuthService {
         return kakaoTokenResponse.getAccess_token();
     }
 
-    @Transactional
-    public KakaoProfile getKakaoProfile(String accessToken)
+    private KakaoProfile getKakaoProfile(String accessToken)
             throws JsonProcessingException {
         String authorization = "Bearer " + accessToken;
         ResponseEntity<String> response = kakaoApiClient.getUserInfo(authorization);
@@ -55,20 +72,7 @@ public class AuthService {
         return objectMapper.readValue(response.getBody(), KakaoProfile.class);
     }
 
-    @Transactional
-    public KakaoLoginResponse kakaoLogin(KakaoProfile kakaoProfile) {
-        String memberEmail = kakaoProfile.kakao_account.email;
-
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseGet(() -> kakaoSignUp(kakaoProfile));
-
-        String token = tokenProvider.generateToken(member.getEmail(), member.getId(), member.getRole());
-
-        return KakaoLoginResponse.from(member, token);
-    }
-
-    @Transactional
-    public Member kakaoSignUp(KakaoProfile kakaoProfile) {
+    private Member kakaoSignUp(KakaoProfile kakaoProfile) {
         Member member = Member.builder()
                 .email(kakaoProfile.kakao_account.email)
                 .nickname(kakaoProfile.properties.nickname)

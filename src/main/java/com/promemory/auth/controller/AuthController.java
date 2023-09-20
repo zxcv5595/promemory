@@ -2,7 +2,6 @@ package com.promemory.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.promemory.auth.dto.KakaoLoginResponse;
-import com.promemory.auth.openfeign.dto.KakaoProfile;
 import com.promemory.auth.service.AuthService;
 import com.promemory.global.exception.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,12 +39,10 @@ public class AuthController {
     })
 
     @GetMapping(value = "/auth/kakao/callback", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<KakaoLoginResponse> kakaoCallback(String code)
+    public ResponseEntity<KakaoLoginResponse> kakaoCallback(@RequestParam String code)
             throws JsonProcessingException {
 
-        String kakaoToken = authService.getKakaoToken(code);
-        KakaoProfile kakaoProfile = authService.getKakaoProfile(kakaoToken);
-        KakaoLoginResponse kakaoLoginResponse = authService.kakaoLogin(kakaoProfile);
+        KakaoLoginResponse kakaoLoginResponse = authService.kakaoLogin(code);
 
         return ResponseEntity.ok(kakaoLoginResponse);
     }
