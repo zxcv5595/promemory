@@ -31,6 +31,7 @@ public class MemberController {
     @Operation(summary = "닉네임, 프로필 사진 변경",
             description = """
                     image:  (5MB 미만)
+                    
                     data: application/json ex:{"nickname":"창호"}
                                         
                     닉네임과 프로필 사진을 변경 해줌
