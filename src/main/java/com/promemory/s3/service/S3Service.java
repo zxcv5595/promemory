@@ -34,6 +34,25 @@ public class S3Service {
 
         String fileKey = "profile/" + userEmail;
 
+        return uploadFile(file, userEmail, metadata, fileKey);
+    }
+
+    public String uploadFileForTeam(MultipartFile file, String userEmail) {
+
+        log.info("[uploadFileForProfile 시작]" + " userEmail : " + userEmail);
+
+        ObjectMetadata metadata = new ObjectMetadata();
+
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+
+        String fileKey = "Team/" + userEmail;
+
+        return uploadFile(file, userEmail, metadata, fileKey);
+    }
+
+    private String uploadFile(MultipartFile file, String userEmail, ObjectMetadata metadata,
+            String fileKey) {
         try {
             amazonS3Client.putObject(bucket, fileKey, file.getInputStream(), metadata);
             amazonS3Client.setObjectAcl(bucket, fileKey, CannedAccessControlList.PublicRead);
