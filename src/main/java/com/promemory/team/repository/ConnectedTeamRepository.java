@@ -8,6 +8,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ConnectedTeamRepository extends JpaRepository<ConnectedTeam, Long> {
+
     List<ConnectedTeam> findByTeam(Team team);
+
     Optional<ConnectedTeam> findByTeamAndMember(Team team, Member member);
+
+    boolean existsByTeamAndMember(Team team, Member member);
 }

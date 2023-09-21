@@ -7,6 +7,7 @@ import com.promemory.team.dto.TeamDto;
 import com.promemory.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +40,22 @@ public class TeamController {
         teamService.leaveTeam(member, teamId);
 
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/{teamId}")
+    public String createCodeForInvite(
+            @CurrentUser Member member,
+            @PathVariable Long teamId
+    ) {
+        return teamService.createCodeForInvite(member,teamId);
+    }
+
+    @PostMapping("/join/{code}")
+    public TeamDto joinTeamByInviteCode(
+            @CurrentUser Member member,
+            @PathVariable(name = "code") String inviteCode
+    ) {
+        System.out.println(inviteCode);
+       return teamService.joinTeamByInviteCode(member, inviteCode);
     }
 }

@@ -10,7 +10,11 @@ import com.promemory.team.entity.Team;
 import com.promemory.team.repository.ConnectedTeamRepository;
 import com.promemory.team.repository.TeamRepository;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +26,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final ConnectedTeamRepository connectedTeamRepository;
     private final S3Service s3Service;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public TeamDto createTeam(Member member, String teamName, MultipartFile image) {
@@ -34,13 +39,7 @@ public class TeamService {
 
         Team newTeam = saveTeamEntity(teamName, mainImg);
 
-        ConnectedTeam connectedTeam = connectedTeamRepository.save(
-                ConnectedTeam.builder()
-                        .team(newTeam)
-                        .member(member)
-                        .build()
-        );
-        newTeam.getConnectedTeam().add(connectedTeam);
+        joinTeam(member, newTeam);
 
         List<String> nicknames = getTeamMemberByTeam(newTeam);
 
@@ -48,21 +47,67 @@ public class TeamService {
     }
 
     public void leaveTeam(Member member, Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+        Team team = findTeamById(teamId);
 
-
-        ConnectedTeam connectedMember = connectedTeamRepository.findByTeamAndMember(team, member)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        ConnectedTeam connectedMember = findByConnectedTeamByMemberAndTeam(member, team);
 
         team.getConnectedTeam().remove(connectedMember);
         connectedTeamRepository.delete(connectedMember);
 
-        if(team.getConnectedTeam().size()<=1){
+        if (team.getConnectedTeam().size() <= 1) {
             teamRepository.delete(team);
         }
     }
 
+    public String createCodeForInvite(Member member,Long teamId) {
+        Team team = findTeamById(teamId);
+
+        if(!connectedTeamRepository.existsByTeamAndMember(team,member)){
+            throw new CustomException(ErrorCode.YOUR_NOT_MEMBER);
+        }
+
+        String inviteCod = UUID.randomUUID().toString();
+
+        redisTemplate.opsForValue().set(inviteCod, teamId.toString(), 1, TimeUnit.DAYS);
+
+        return inviteCod;
+    }
+
+    public TeamDto joinTeamByInviteCode(Member member, String inviteCode) {
+        String teamId = redisTemplate.opsForValue().get(inviteCode);
+        Team team = findTeamById(Long.parseLong(Objects.requireNonNull(teamId)));
+
+        if (connectedTeamRepository.existsByTeamAndMember(team, member)) {
+            throw new CustomException(ErrorCode.ALREADY_JOINED);
+        }
+        joinTeam(member,team);
+
+        List<String> nicknames = getTeamMemberByTeam(team);
+
+        return TeamDto.from(team, nicknames);
+
+    }
+
+    private void joinTeam(Member member, Team team) {
+        ConnectedTeam connectedTeam = connectedTeamRepository.save(
+                ConnectedTeam.builder()
+                        .team(team)
+                        .member(member)
+                        .build()
+        );
+        team.getConnectedTeam().add(connectedTeam);
+    }
+
+    private Team findTeamById(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+    }
+
+
+    private ConnectedTeam findByConnectedTeamByMemberAndTeam(Member member, Team team) {
+        return connectedTeamRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+    }
 
     private List<String> getTeamMemberByTeam(Team team) {
         List<ConnectedTeam> connectedMembers = connectedTeamRepository.findByTeam(team);
