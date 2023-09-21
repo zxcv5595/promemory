@@ -18,21 +18,30 @@ public class MemberService {
     private final S3Service s3Service;
 
     @Transactional
-    public void updateNickname(Member member, String nickname) {
+    public Member updateUserDetails(Member member, String nickname,MultipartFile image){
+        updateNickname(member,nickname);
+
+        if(image!=null){
+            updateProfileImg(member,image);
+        }
+
+        memberRepository.save(member);
+
+        return member;
+    }
+
+    private void updateNickname(Member member, String nickname) {
         member.setNickname(nickname);
         member.setFirst(false);
         memberRepository.save(member);
     }
 
-    @Transactional
-    public String updateProfileImg(Member member, MultipartFile image) {
+    private void updateProfileImg(Member member, MultipartFile image) {
         if (image.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_IMG);
         }
         member.setProfileImg(s3Service.uploadFileForProfile(image, member.getEmail()));
-        memberRepository.save(member);
 
-        return member.getProfileImg();
     }
 
 }
