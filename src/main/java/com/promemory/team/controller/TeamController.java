@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +33,13 @@ public class TeamController {
     @Operation(summary = "팀 생성",
             description = """
                     image:  (5MB 미만)
-                    
+                                        
                     data: application/json ex:{"teamName":"promemory"}
                                         
                     팀 썸네일 이미지, 팀명 모두 필수 값
-                    
+                                        
                     팀명은 중복될 수 없음(unique value)
-                    
+                                        
                     이미 팀 이름이 존재한다면 400 에러
                                         
                     인증을 위해 Bearer {json web token} 을 헤더 Authorization 에 첨부해야 함
@@ -61,7 +62,7 @@ public class TeamController {
     public ResponseEntity<TeamDto> createTeam(
             @CurrentUser Member member,
             @RequestPart(value = "image") MultipartFile image,
-            @RequestPart(value = "data") CreateTeamRequest request
+            @Valid @RequestPart(value = "data") CreateTeamRequest request
     ) {
         TeamDto teamDto = teamService.createTeam(member, request.getTeamName(), image);
         return ResponseEntity.ok(teamDto);
@@ -71,11 +72,11 @@ public class TeamController {
     @Operation(summary = "팀 나가기",
             description = """
                     팀을 나감
-                    
+                                        
                     마지막 인원이 나가면 팀이 삭제됨
-                    
+                                        
                     200을 응답함
-                    
+                                        
                     인증을 위해 Bearer {json web token} 을 헤더 Authorization 에 첨부해야 함
                     """, responses = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
@@ -96,13 +97,13 @@ public class TeamController {
     @Operation(summary = "팀 초대코드 생성",
             description = """
                     팀 초대 코드를 생성함
-                    
+                                        
                     200: 초대코드를 반환함 (String)
-                    
+                                        
                     마지막 인원이 나가면 팀이 삭제됨
-                    
+                                        
                     팀에 속한 구성원 만, 초대 가능
-                    
+                                        
                     인증을 위해 Bearer {json web token} 을 헤더 Authorization 에 첨부해야 함
                     """, responses = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
@@ -115,18 +116,18 @@ public class TeamController {
             @CurrentUser Member member,
             @PathVariable Long teamId
     ) {
-        return teamService.createCodeForInvite(member,teamId);
+        return teamService.createCodeForInvite(member, teamId);
     }
 
 
     @Operation(summary = "팀 참여",
             description = """
                     초대 코드를 통해 팀에 참여함
-                    
+                                        
                     로그인 되어 있어야함
-                    
+                                        
                     이미 참여 된 유저는 400에러
-                    
+                                        
                     인증을 위해 Bearer {json web token} 을 헤더 Authorization 에 첨부해야 함
                     """, responses = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
@@ -140,6 +141,6 @@ public class TeamController {
             @PathVariable(name = "code") String inviteCode
     ) {
         System.out.println(inviteCode);
-       return teamService.joinTeamByInviteCode(member, inviteCode);
+        return teamService.joinTeamByInviteCode(member, inviteCode);
     }
 }

@@ -18,7 +18,9 @@ public enum ErrorCode {
     VALIDATION_FAILED("잘못된 요청 값입니다.", HttpStatus.BAD_REQUEST);
 
     public static final String NICKNAME_NOT_NULL_MESSAGE = "닉네임을 입력해주세요.";
+    public static final String TEAM_NAME_NOT_NULL_MESSAGE = "팀명을 입력해주세요.";
     public static final String NICKNAME_SIZE_MESSAGE = "닉네임은 20자를 넘길 수 없습니다.";
+    public static final String TEAM_NAME_SIZE_MESSAGE = "팀명은 20자를 넘길 수 없습니다.";
 
     private final String message;
     private final HttpStatus status;
