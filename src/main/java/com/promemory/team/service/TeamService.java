@@ -34,17 +34,35 @@ public class TeamService {
 
         Team newTeam = saveTeamEntity(teamName, mainImg);
 
-        connectedTeamRepository.save(
+        ConnectedTeam connectedTeam = connectedTeamRepository.save(
                 ConnectedTeam.builder()
                         .team(newTeam)
                         .member(member)
                         .build()
         );
+        newTeam.getConnectedTeam().add(connectedTeam);
 
         List<String> nicknames = getTeamMemberByTeam(newTeam);
 
         return TeamDto.from(newTeam, nicknames);
     }
+
+    public void leaveTeam(Member member, Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+
+
+        ConnectedTeam connectedMember = connectedTeamRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        team.getConnectedTeam().remove(connectedMember);
+        connectedTeamRepository.delete(connectedMember);
+
+        if(team.getConnectedTeam().size()<=1){
+            teamRepository.delete(team);
+        }
+    }
+
 
     private List<String> getTeamMemberByTeam(Team team) {
         List<ConnectedTeam> connectedMembers = connectedTeamRepository.findByTeam(team);

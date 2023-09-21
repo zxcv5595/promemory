@@ -10,6 +10,7 @@ public enum ErrorCode {
     ACCESS_DENIED("접근권한이 없습니다.", HttpStatus.FORBIDDEN),
     NOT_FOUND_USER("유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_IMG("이미지 파일이 필요합니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_TEAM("존재하지않는 팀입니다.", HttpStatus.NOT_FOUND),
     ALREADY_EXIST_TEAM_NAME("이미 존재하는 팀명 입니다.", HttpStatus.BAD_REQUEST),
     FAILED_UPLOAD("업로드에 실패했습니다. 지원하지않는 파일 일 수 있습니다.", HttpStatus.BAD_REQUEST),
     VALIDATION_FAILED("잘못된 요청 값입니다.", HttpStatus.BAD_REQUEST);

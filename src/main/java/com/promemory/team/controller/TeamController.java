@@ -4,10 +4,10 @@ import com.promemory.member.annotation.CurrentUser;
 import com.promemory.member.entity.Member;
 import com.promemory.team.dto.CreateTeamRequest;
 import com.promemory.team.dto.TeamDto;
-import com.promemory.team.entity.Team;
 import com.promemory.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -26,8 +26,18 @@ public class TeamController {
             @CurrentUser Member member,
             @RequestPart(value = "image") MultipartFile image,
             @RequestPart(value = "data") CreateTeamRequest request
-            ){
+    ) {
         TeamDto teamDto = teamService.createTeam(member, request.getTeamName(), image);
         return ResponseEntity.ok(teamDto);
+    }
+
+    @PostMapping("/{teamId}")
+    public ResponseEntity<Void> leaveTeam(
+            @CurrentUser Member member,
+            @PathVariable Long teamId
+    ) {
+        teamService.leaveTeam(member, teamId);
+
+        return ResponseEntity.ok(null);
     }
 }
