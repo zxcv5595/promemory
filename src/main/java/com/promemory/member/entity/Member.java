@@ -47,4 +47,8 @@ public class Member extends BaseEntity {
         this.isFirst = isFirst;
     }
 
+    public void setProfileImg(String url) {
+        this.profileImg = url;
+    }
+
 }
