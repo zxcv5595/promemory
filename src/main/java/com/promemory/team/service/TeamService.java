@@ -54,15 +54,15 @@ public class TeamService {
         team.getConnectedTeam().remove(connectedMember);
         connectedTeamRepository.delete(connectedMember);
 
-        if (team.getConnectedTeam().size() <= 1) {
+        if (team.getConnectedTeam().size() < 1) {
             teamRepository.delete(team);
         }
     }
 
-    public String createCodeForInvite(Member member,Long teamId) {
+    public String createCodeForInvite(Member member, Long teamId) {
         Team team = findTeamById(teamId);
 
-        if(!connectedTeamRepository.existsByTeamAndMember(team,member)){
+        if (!connectedTeamRepository.existsByTeamAndMember(team, member)) {
             throw new CustomException(ErrorCode.YOUR_NOT_MEMBER);
         }
 
@@ -80,7 +80,7 @@ public class TeamService {
         if (connectedTeamRepository.existsByTeamAndMember(team, member)) {
             throw new CustomException(ErrorCode.ALREADY_JOINED);
         }
-        joinTeam(member,team);
+        joinTeam(member, team);
 
         List<String> nicknames = getTeamMemberByTeam(team);
 
@@ -89,13 +89,12 @@ public class TeamService {
     }
 
     private void joinTeam(Member member, Team team) {
-        ConnectedTeam connectedTeam = connectedTeamRepository.save(
+        connectedTeamRepository.save(
                 ConnectedTeam.builder()
                         .team(team)
                         .member(member)
                         .build()
         );
-        team.getConnectedTeam().add(connectedTeam);
     }
 
     private Team findTeamById(Long teamId) {

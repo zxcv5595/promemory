@@ -31,7 +31,7 @@ public class Team extends BaseEntity {
     @Column(nullable = false)
     private String mainImg;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
     private List<ConnectedTeam> connectedTeam = new ArrayList<>();
 
     public Team(String name, String mainImg) {
