@@ -1,7 +1,6 @@
 package com.promemory.team.dto;
 
 import com.promemory.team.entity.Team;
-import com.promemory.team.entity.ConnectedTeam;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

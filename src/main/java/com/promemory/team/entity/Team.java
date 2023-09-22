@@ -32,7 +32,7 @@ public class Team extends BaseEntity {
     private String mainImg;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
-    private List<ConnectedTeam> connectedTeam = new ArrayList<>();
+    private List<ConnectedMembers> connectedMembers = new ArrayList<>();
 
     public Team(String name, String mainImg) {
         this.name = name;

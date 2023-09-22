@@ -5,9 +5,9 @@ import com.promemory.global.exception.type.ErrorCode;
 import com.promemory.member.entity.Member;
 import com.promemory.s3.service.S3Service;
 import com.promemory.team.dto.TeamDto;
-import com.promemory.team.entity.ConnectedTeam;
+import com.promemory.team.entity.ConnectedMembers;
 import com.promemory.team.entity.Team;
-import com.promemory.team.repository.ConnectedTeamRepository;
+import com.promemory.team.repository.ConnectedMembersRepository;
 import com.promemory.team.repository.TeamRepository;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class TeamService {
 
     private final TeamRepository teamRepository;
-    private final ConnectedTeamRepository connectedTeamRepository;
+    private final ConnectedMembersRepository connectedMembersRepository;
     private final S3Service s3Service;
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -49,12 +49,12 @@ public class TeamService {
     public void leaveTeam(Member member, Long teamId) {
         Team team = findTeamById(teamId);
 
-        ConnectedTeam connectedMember = findByConnectedTeamByMemberAndTeam(member, team);
+        ConnectedMembers connectedMember = findByConnectedTeamByMemberAndTeam(member, team);
 
-        team.getConnectedTeam().remove(connectedMember);
-        connectedTeamRepository.delete(connectedMember);
+        team.getConnectedMembers().remove(connectedMember);
+        connectedMembersRepository.delete(connectedMember);
 
-        if (team.getConnectedTeam().size() < 1) {
+        if (team.getConnectedMembers().size() < 1) {
             teamRepository.delete(team);
         }
     }
@@ -62,7 +62,7 @@ public class TeamService {
     public String createCodeForInvite(Member member, Long teamId) {
         Team team = findTeamById(teamId);
 
-        if (!connectedTeamRepository.existsByTeamAndMember(team, member)) {
+        if (!connectedMembersRepository.existsByTeamAndMember(team, member)) {
             throw new CustomException(ErrorCode.YOUR_NOT_MEMBER);
         }
 
@@ -77,7 +77,7 @@ public class TeamService {
         String teamId = redisTemplate.opsForValue().get(inviteCode);
         Team team = findTeamById(Long.parseLong(Objects.requireNonNull(teamId)));
 
-        if (connectedTeamRepository.existsByTeamAndMember(team, member)) {
+        if (connectedMembersRepository.existsByTeamAndMember(team, member)) {
             throw new CustomException(ErrorCode.ALREADY_JOINED);
         }
         joinTeam(member, team);
@@ -89,8 +89,8 @@ public class TeamService {
     }
 
     private void joinTeam(Member member, Team team) {
-        connectedTeamRepository.save(
-                ConnectedTeam.builder()
+        connectedMembersRepository.save(
+                ConnectedMembers.builder()
                         .team(team)
                         .member(member)
                         .build()
@@ -103,13 +103,13 @@ public class TeamService {
     }
 
 
-    private ConnectedTeam findByConnectedTeamByMemberAndTeam(Member member, Team team) {
-        return connectedTeamRepository.findByTeamAndMember(team, member)
+    private ConnectedMembers findByConnectedTeamByMemberAndTeam(Member member, Team team) {
+        return connectedMembersRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
     private List<String> getTeamMemberByTeam(Team team) {
-        List<ConnectedTeam> connectedMembers = connectedTeamRepository.findByTeam(team);
+        List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByTeam(team);
         connectedMembers.get(0).getMember().getNickname();
 
         return connectedMembers.stream()
