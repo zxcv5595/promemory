@@ -22,7 +22,7 @@ public class PublishMemory {
     public static class Request {
 
         private String teamName;
-        private boolean isPublic;
+        private Boolean isPublic;
         @NotEmpty(message = NOT_EMPTY_DOCUMENT)
         private List<String> documentNames;
 

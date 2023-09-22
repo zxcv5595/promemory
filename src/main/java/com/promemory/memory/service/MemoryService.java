@@ -46,7 +46,7 @@ public class MemoryService {
         Memory memory = memoryRepository.save(Memory.builder()
                 .team(team)
                 .memoryType(request.getMemoryType())
-                .isPublic(request.isPublic())
+                .isPublic(request.getIsPublic())
                 .likes(0L)
                 .build());
 
