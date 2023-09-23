@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(description = "카카오 로그인 응답 DTO")
 public class KakaoLoginResponse {
+    @Schema(description = "memberId", defaultValue = "1")
+    private Long memberId;
 
     @Schema(description = "카카오 닉네임", defaultValue = "이창호")
     private String nickname;
@@ -28,6 +30,7 @@ public class KakaoLoginResponse {
 
     public static KakaoLoginResponse from(Member member, String jwt) {
         return KakaoLoginResponse.builder()
+                .memberId(member.getId())
                 .nickname(member.getNickname())
                 .profileImg(member.getProfileImg())
                 .isFirst(member.isFirst())
