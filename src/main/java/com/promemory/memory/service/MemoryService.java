@@ -129,7 +129,7 @@ public class MemoryService {
     }
 
     public List<GetProjectListDto> getProjectListByMember(Member member) {
-        List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByMember(member);
+        List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByMemberOrderByCreatedAtDesc(member);
         List<Project> projects = connectedMembers.stream()
                 .map(connectedMember -> connectedMember.getMemory().getProject())
                 .toList();
