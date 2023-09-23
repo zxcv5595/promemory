@@ -3,6 +3,8 @@ package com.promemory.memory.service;
 import com.promemory.global.exception.CustomException;
 import com.promemory.global.exception.type.ErrorCode;
 import com.promemory.member.entity.Member;
+import com.promemory.memory.dto.JoinMemory;
+import com.promemory.memory.dto.JoinMemory.Response;
 import com.promemory.memory.dto.PublishProject;
 import com.promemory.memory.entity.ConnectedMembers;
 import com.promemory.memory.entity.Memory;
@@ -11,6 +13,7 @@ import com.promemory.memory.repository.ConnectedMembersRepository;
 import com.promemory.memory.repository.MemoryRepository;
 import com.promemory.memory.repository.ProjectRepository;
 import com.promemory.s3.service.S3Service;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +86,37 @@ public class MemoryService {
         redisTemplate.opsForValue().set(inviteCode, roomId, 1, TimeUnit.HOURS);
 
         return inviteCode;
+    }
+
+    public Response joinMemory(Member member, String inviteCode) {
+        String roomId = redisTemplate.opsForValue().get(inviteCode);
+
+        if (roomId == null) {
+            throw new CustomException(ErrorCode.EXPIRED_INVITE_CODE);
+        }
+
+        Memory memory = findMemoryByRoomId(roomId);
+
+        if (connectedMembersRepository.existsByMemoryAndMember(memory, member)) {
+            throw new CustomException(ErrorCode.ALREADY_JOINED);
+        }
+        connectedMembersRepository.save(
+                ConnectedMembers.builder()
+                        .memory(memory)
+                        .member(member)
+                        .build()
+        );
+
+        List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByMemory(memory);
+
+        List<String> memberNicknames = connectedMembers.stream()
+                .map(connectedMember -> connectedMember.getMember().getNickname())
+                .toList();
+
+        return JoinMemory.Response.builder()
+                .room_id(roomId)
+                .memberNicknames(memberNicknames)
+                .build();
     }
 
     private Memory findMemoryByRoomId(String roomId) {

@@ -14,6 +14,7 @@ public enum ErrorCode {
     YOUR_NOT_MEMBER("팀에 속한 구성원이 아닙니다.", HttpStatus.BAD_REQUEST),
     ALREADY_EXIST_PROJECT_NAME("이미 존재하는 프로젝트명 입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_JOINED("이미 가입된 팀 입니다.", HttpStatus.BAD_REQUEST),
+    EXPIRED_INVITE_CODE("만료된 초대코드 입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_EXIST_MEMORY("이미 회고록이 존재합니다.", HttpStatus.BAD_REQUEST),
     FAILED_UPLOAD("업로드에 실패했습니다. 지원하지않는 파일 일 수 있습니다.", HttpStatus.BAD_REQUEST),
     VALIDATION_FAILED("잘못된 요청 값입니다.", HttpStatus.BAD_REQUEST);
