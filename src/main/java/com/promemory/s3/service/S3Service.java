@@ -37,27 +37,27 @@ public class S3Service {
         return uploadFile(file, userEmail, metadata, fileKey);
     }
 
-    public String uploadFileForProject(MultipartFile file, String userEmail) {
+    public String uploadFileForProject(MultipartFile file, String roomId) {
 
-        log.info("[uploadFileForProfile 시작]" + " userEmail : " + userEmail);
+        log.info("[uploadFileForProfile 시작]" + " roomId : " + roomId);
 
         ObjectMetadata metadata = new ObjectMetadata();
 
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
 
-        String fileKey = "project/" + userEmail;
+        String fileKey = "project/" + roomId;
 
-        return uploadFile(file, userEmail, metadata, fileKey);
+        return uploadFile(file, roomId, metadata, fileKey);
     }
 
-    private String uploadFile(MultipartFile file, String userEmail, ObjectMetadata metadata,
+    private String uploadFile(MultipartFile file, String key, ObjectMetadata metadata,
             String fileKey) {
         try {
             amazonS3Client.putObject(bucket, fileKey, file.getInputStream(), metadata);
             amazonS3Client.setObjectAcl(bucket, fileKey, CannedAccessControlList.PublicRead);
 
-            log.info("[uploadFileForProfile 완료]" + " userEmail : " + userEmail);
+            log.info("[uploadFileForProfile 완료]" + " key : " + key);
             return amazonS3Client.getUrl(bucket, fileKey).toString();
 
         } catch (SdkClientException | IOException e) {

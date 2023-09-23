@@ -58,11 +58,11 @@ public class MemoryService {
     ) {
         Memory memory = findMemoryByRoomId(request.getRoomId());
 
-        if (projectRepository.existsByName(request.getProjectName())) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_PROJECT_NAME);
+        if(!connectedMembersRepository.existsByMemoryAndMember(memory,member)){
+            throw new CustomException(ErrorCode.YOUR_NOT_MEMBER);
         }
 
-        String mainImg = s3Service.uploadFileForProject(image, member.getEmail());
+        String mainImg = s3Service.uploadFileForProject(image, request.getRoomId());
 
         projectRepository.save(
                 Project.builder()
