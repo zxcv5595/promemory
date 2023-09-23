@@ -80,7 +80,7 @@ public class MemoryService {
         }
 
         String inviteCode = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set(roomId, inviteCode, 1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(roomId, inviteCode, 1, TimeUnit.HOURS);
 
         return inviteCode;
     }
