@@ -12,7 +12,7 @@ public enum ErrorCode {
     NOT_FOUND_IMG("이미지 파일이 필요합니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_MEMORY("등록되지 않은 회고록입니다", HttpStatus.NOT_FOUND),
     YOUR_NOT_MEMBER("팀에 속한 구성원이 아닙니다.", HttpStatus.BAD_REQUEST),
-    ALREADY_EXIST_TEAM_NAME("이미 존재하는 팀명 입니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_EXIST_PROJECT_NAME("이미 존재하는 프로젝트명 입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_JOINED("이미 가입된 팀 입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_EXIST_MEMORY("이미 회고록이 존재합니다.", HttpStatus.BAD_REQUEST),
     FAILED_UPLOAD("업로드에 실패했습니다. 지원하지않는 파일 일 수 있습니다.", HttpStatus.BAD_REQUEST),

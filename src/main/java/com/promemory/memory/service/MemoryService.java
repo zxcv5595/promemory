@@ -26,6 +26,10 @@ public class MemoryService {
 
     public void createMemory(Member member, String roomId) {
 
+        if(memoryRepository.existsByRoomId(roomId)){
+            throw new CustomException(ErrorCode.ALREADY_EXIST_MEMORY);
+        }
+
         Memory memory = memoryRepository.save(new Memory(roomId));
 
         connectedMembersRepository.save(
@@ -44,6 +48,10 @@ public class MemoryService {
         Memory memory = memoryRepository.findByRoomId(request.getRoomId())
                 .orElseThrow(() -> new CustomException(
                         ErrorCode.NOT_FOUND_MEMORY));
+
+        if(projectRepository.existsByName(request.getProjectName())){
+            throw new CustomException(ErrorCode.ALREADY_EXIST_PROJECT_NAME);
+        }
 
         String mainImg = s3Service.uploadFileForProject(image, member.getEmail());
 
