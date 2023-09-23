@@ -10,7 +10,7 @@ public enum ErrorCode {
     ACCESS_DENIED("접근권한이 없습니다.", HttpStatus.FORBIDDEN),
     NOT_FOUND_USER("유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_IMG("이미지 파일이 필요합니다.", HttpStatus.NOT_FOUND),
-    NOT_FOUND_TEAM("존재하지않는 팀입니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_MEMORY("등록되지 않은 회고록입니다", HttpStatus.NOT_FOUND),
     YOUR_NOT_MEMBER("팀에 속한 구성원이 아닙니다.", HttpStatus.BAD_REQUEST),
     ALREADY_EXIST_TEAM_NAME("이미 존재하는 팀명 입니다.", HttpStatus.BAD_REQUEST),
     ALREADY_JOINED("이미 가입된 팀 입니다.", HttpStatus.BAD_REQUEST),

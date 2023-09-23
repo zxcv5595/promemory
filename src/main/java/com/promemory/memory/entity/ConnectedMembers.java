@@ -1,4 +1,4 @@
-package com.promemory.team.entity;
+package com.promemory.memory.entity;
 
 import com.promemory.global.entity.BaseEntity;
 import com.promemory.member.entity.Member;
@@ -18,18 +18,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-public class ConnectedMembers extends BaseEntity{
+public class ConnectedMembers extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
-
-    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "memory_id")
+    private Memory memory;
 
 }

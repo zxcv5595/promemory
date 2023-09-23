@@ -1,16 +1,12 @@
 package com.promemory.memory.entity;
 
-import com.promemory.memory.type.MemoryType;
-import com.promemory.team.entity.Team;
+import com.promemory.global.entity.BaseEntity;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -23,33 +19,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Memory {
+public class Memory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
-    private MemoryType memoryType;
-
-    private boolean isPublic;
-
-    private Long likes;
-
-    @OneToOne
-    private Team team;
+    private Long Id;
+    private String roomId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "memory")
-    private List<Document> documents = new ArrayList<>();
+    private List<ConnectedMembers> connectedMembers = new ArrayList<>();
 
-    public void addDocument(Document document) {
-
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-
-        document.setMemory(this);
-        documents.add(document);
+    public Memory(String roomId){
+        this.roomId = roomId;
     }
-
 }

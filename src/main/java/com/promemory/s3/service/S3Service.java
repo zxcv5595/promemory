@@ -37,7 +37,7 @@ public class S3Service {
         return uploadFile(file, userEmail, metadata, fileKey);
     }
 
-    public String uploadFileForTeam(MultipartFile file, String userEmail) {
+    public String uploadFileForProject(MultipartFile file, String userEmail) {
 
         log.info("[uploadFileForProfile 시작]" + " userEmail : " + userEmail);
 
@@ -46,7 +46,7 @@ public class S3Service {
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
 
-        String fileKey = "Team/" + userEmail;
+        String fileKey = "project/" + userEmail;
 
         return uploadFile(file, userEmail, metadata, fileKey);
     }

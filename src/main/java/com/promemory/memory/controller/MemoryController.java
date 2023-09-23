@@ -2,14 +2,15 @@ package com.promemory.memory.controller;
 
 import com.promemory.member.annotation.CurrentUser;
 import com.promemory.member.entity.Member;
-import com.promemory.memory.dto.PublishMemory;
+import com.promemory.memory.dto.PublishProject;
 import com.promemory.memory.service.MemoryService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +20,26 @@ public class MemoryController {
     private final MemoryService memoryService;
 
     @PostMapping
-    public PublishMemory.Response publishMemory(
+    public ResponseEntity<Void> createMemory(
             @CurrentUser Member member,
-            @Valid @RequestBody PublishMemory.Request request
+            String roomId
     ) {
-        return memoryService.publishMemory(member, request);
+        memoryService.createMemory(member, roomId);
+
+        return ResponseEntity.ok(null);
     }
+
+    @PostMapping("/project")
+    public ResponseEntity<Void> publishProject(
+            @CurrentUser Member member,
+            @RequestPart(name = "data") PublishProject.Request request,
+            @RequestPart(name = "image") MultipartFile image
+    ) {
+        memoryService.publishProject(member,request,image);
+
+        return ResponseEntity.ok(null);
+    }
+
+
+
 }
