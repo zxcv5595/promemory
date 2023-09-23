@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,4 +33,7 @@ public class Memory extends BaseEntity {
     public Memory(String roomId){
         this.roomId = roomId;
     }
+
+    @OneToOne(fetch = FetchType.LAZY,mappedBy ="memory")
+    private Project project;
 }

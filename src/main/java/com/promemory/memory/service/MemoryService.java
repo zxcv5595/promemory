@@ -128,6 +128,15 @@ public class MemoryService {
 
     }
 
+    public List<GetProjectListDto> getProjectListByMember(Member member) {
+        List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByMember(member);
+        List<Project> projects = connectedMembers.stream()
+                .map(connectedMember -> connectedMember.getMemory().getProject())
+                .toList();
+
+        return projects.stream().map(GetProjectListDto::from).toList();
+    }
+
     private Memory findMemoryByRoomId(String roomId) {
         return memoryRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(

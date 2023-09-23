@@ -62,7 +62,14 @@ public class MemoryController {
     }
 
     @GetMapping("/list")
-    public List<GetProjectListDto> getMemoryList(){
+    public List<GetProjectListDto> getProjectList(){
         return memoryService.getProjectList();
+    }
+
+    @GetMapping("/member/list")
+    public List<GetProjectListDto> getProjectListByMember(
+        @CurrentUser Member member
+    ){
+        return memoryService.getProjectListByMember(member);
     }
 }

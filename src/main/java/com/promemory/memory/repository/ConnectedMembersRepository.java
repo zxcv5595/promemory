@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ConnectedMembersRepository extends JpaRepository<ConnectedMembers,Long> {
     boolean existsByMemoryAndMember(Memory memory, Member member);
     List<ConnectedMembers> findByMemory(Memory memory);
+    List<ConnectedMembers> findByMember(Member member);
 }
