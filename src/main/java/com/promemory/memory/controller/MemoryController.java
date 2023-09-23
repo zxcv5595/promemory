@@ -6,6 +6,7 @@ import com.promemory.memory.dto.PublishProject;
 import com.promemory.memory.service.MemoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -40,6 +41,12 @@ public class MemoryController {
         return ResponseEntity.ok(null);
     }
 
-
+    @GetMapping
+    public String getInviteCode(
+            @CurrentUser Member member,
+            String roomId
+    ){
+        return memoryService.getInviteCode(member,roomId);
+    }
 
 }

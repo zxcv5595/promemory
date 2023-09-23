@@ -11,8 +11,12 @@ import com.promemory.memory.repository.ConnectedMembersRepository;
 import com.promemory.memory.repository.MemoryRepository;
 import com.promemory.memory.repository.ProjectRepository;
 import com.promemory.s3.service.S3Service;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -22,11 +26,13 @@ public class MemoryService {
     private final ConnectedMembersRepository connectedMembersRepository;
     private final MemoryRepository memoryRepository;
     private final ProjectRepository projectRepository;
+    private final RedisTemplate<String, String> redisTemplate;
     private final S3Service s3Service;
 
+    @Transactional
     public void createMemory(Member member, String roomId) {
 
-        if(memoryRepository.existsByRoomId(roomId)){
+        if (memoryRepository.existsByRoomId(roomId)) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_MEMORY);
         }
 
@@ -40,16 +46,15 @@ public class MemoryService {
         );
     }
 
+    @Transactional
     public void publishProject(
             Member member,
             PublishProject.Request request,
             MultipartFile image
     ) {
-        Memory memory = memoryRepository.findByRoomId(request.getRoomId())
-                .orElseThrow(() -> new CustomException(
-                        ErrorCode.NOT_FOUND_MEMORY));
+        Memory memory = findMemoryByRoomId(request.getRoomId());
 
-        if(projectRepository.existsByName(request.getProjectName())){
+        if (projectRepository.existsByName(request.getProjectName())) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_PROJECT_NAME);
         }
 
@@ -65,4 +70,26 @@ public class MemoryService {
                         .build()
         );
     }
+
+    @Transactional
+    public String getInviteCode(Member member, String roomId) {
+        Memory memory = findMemoryByRoomId(roomId);
+
+        if (!connectedMembersRepository.existsByMemoryAndMember(memory, member)) {
+            throw new CustomException(ErrorCode.YOUR_NOT_MEMBER);
+        }
+
+        String inviteCode = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(roomId, inviteCode, 1, TimeUnit.DAYS);
+
+        return inviteCode;
+    }
+
+    private Memory findMemoryByRoomId(String roomId) {
+        return memoryRepository.findByRoomId(roomId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.NOT_FOUND_MEMORY));
+    }
+
+
 }
