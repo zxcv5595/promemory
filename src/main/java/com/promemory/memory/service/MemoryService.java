@@ -90,6 +90,7 @@ public class MemoryService {
         return inviteCode;
     }
 
+    @Transactional
     public Response joinMemory(Member member, String inviteCode) {
         String roomId = redisTemplate.opsForValue().get(inviteCode);
 
@@ -121,6 +122,7 @@ public class MemoryService {
                 .build();
     }
 
+    @Transactional
     public List<GetProjectListDto> getProjectList() {
         List<Project> projects = projectRepository.findAllByPublicFieldIsTrueOrderByLikesDesc();
 
@@ -128,6 +130,7 @@ public class MemoryService {
 
     }
 
+    @Transactional
     public List<GetProjectListDto> getProjectListByMember(Member member) {
         List<ConnectedMembers> connectedMembers = connectedMembersRepository.findByMemberOrderByCreatedAtDesc(member);
         List<Project> projects = connectedMembers.stream()
@@ -137,6 +140,7 @@ public class MemoryService {
         return projects.stream().map(GetProjectListDto::from).toList();
     }
 
+    @Transactional
     public Boolean checkAuthForUpdateMemory(Member member,String roomId){
         Memory memory = findMemoryByRoomId(roomId);
         return connectedMembersRepository.existsByMemoryAndMember(memory, member);

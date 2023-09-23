@@ -40,7 +40,8 @@ public class SecurityConfig {
                                         "/health",
                                         "/error",
                                         "/index.html",
-                                        "/v1/api/memory/list"
+                                        "/v1/api/memory/list",
+                                        "/v1/api/comment/list"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/auth/kakao/callback"

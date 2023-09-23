@@ -36,4 +36,8 @@ public class Memory extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY,mappedBy ="memory")
     private Project project;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "memory")
+    private List<Comment> comments = new ArrayList<>();
+
 }
