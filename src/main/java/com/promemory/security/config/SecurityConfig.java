@@ -39,7 +39,8 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/health",
                                         "/error",
-                                        "/index.html"
+                                        "/index.html",
+                                        "/v1/api/memory/list"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/auth/kakao/callback"

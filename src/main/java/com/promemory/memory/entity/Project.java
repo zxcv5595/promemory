@@ -1,6 +1,7 @@
 package com.promemory.memory.entity;
 
 import com.promemory.global.entity.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,10 @@ public final class Project extends BaseEntity {
     private String name;
     private String intro;
     private String mainImg;
-    private boolean isPublic;
+    private Long likes;
+
+    @Column(name = "is_public")
+    private boolean publicField;
 
     @OneToOne
     private Memory memory;

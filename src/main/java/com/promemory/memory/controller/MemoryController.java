@@ -2,9 +2,11 @@ package com.promemory.memory.controller;
 
 import com.promemory.member.annotation.CurrentUser;
 import com.promemory.member.entity.Member;
+import com.promemory.memory.dto.GetProjectListDto;
 import com.promemory.memory.dto.JoinMemory;
 import com.promemory.memory.dto.PublishProject;
 import com.promemory.memory.service.MemoryService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,5 +59,10 @@ public class MemoryController {
             @PathVariable(name = "code") String inviteCode
     ) {
         return memoryService.joinMemory(member, inviteCode);
+    }
+
+    @GetMapping("/list")
+    public List<GetProjectListDto> getMemoryList(){
+        return memoryService.getProjectList();
     }
 }

@@ -3,6 +3,7 @@ package com.promemory.memory.service;
 import com.promemory.global.exception.CustomException;
 import com.promemory.global.exception.type.ErrorCode;
 import com.promemory.member.entity.Member;
+import com.promemory.memory.dto.GetProjectListDto;
 import com.promemory.memory.dto.JoinMemory;
 import com.promemory.memory.dto.JoinMemory.Response;
 import com.promemory.memory.dto.PublishProject;
@@ -67,9 +68,10 @@ public class MemoryService {
                 Project.builder()
                         .name(request.getProjectName())
                         .intro(request.getIntro())
-                        .isPublic(request.getIsPublic())
+                        .publicField(request.getIsPublic())
                         .mainImg(mainImg)
                         .memory(memory)
+                        .likes(0L)
                         .build()
         );
     }
@@ -117,6 +119,13 @@ public class MemoryService {
                 .room_id(roomId)
                 .memberNicknames(memberNicknames)
                 .build();
+    }
+
+    public List<GetProjectListDto> getProjectList() {
+        List<Project> projects = projectRepository.findAllByPublicFieldIsTrueOrderByLikesDesc();
+
+        return projects.stream().map(GetProjectListDto::from).toList();
+
     }
 
     private Memory findMemoryByRoomId(String roomId) {
