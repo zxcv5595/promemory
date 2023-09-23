@@ -137,6 +137,11 @@ public class MemoryService {
         return projects.stream().map(GetProjectListDto::from).toList();
     }
 
+    public Boolean checkAuthForUpdateMemory(Member member,String roomId){
+        Memory memory = findMemoryByRoomId(roomId);
+        return connectedMembersRepository.existsByMemoryAndMember(memory, member);
+    }
+
     private Memory findMemoryByRoomId(String roomId) {
         return memoryRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new CustomException(

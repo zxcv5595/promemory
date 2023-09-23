@@ -4,6 +4,7 @@ import com.promemory.member.annotation.CurrentUser;
 import com.promemory.member.entity.Member;
 import com.promemory.memory.dto.GetProjectListDto;
 import com.promemory.memory.dto.JoinMemory;
+import com.promemory.memory.dto.JoinMemory.Response;
 import com.promemory.memory.dto.PublishProject;
 import com.promemory.memory.service.MemoryService;
 import java.util.List;
@@ -46,30 +47,44 @@ public class MemoryController {
     }
 
     @GetMapping
-    public String getInviteCode(
+    public ResponseEntity<String> getInviteCode(
             @CurrentUser Member member,
             String roomId
     ) {
-        return memoryService.getInviteCode(member, roomId);
+        String inviteCode = memoryService.getInviteCode(member, roomId);
+
+        return ResponseEntity.ok(inviteCode);
     }
 
     @PostMapping("/join/{code}")
-    public JoinMemory.Response joinMemory(
+    public ResponseEntity<JoinMemory.Response> joinMemory(
             @CurrentUser Member member,
             @PathVariable(name = "code") String inviteCode
     ) {
-        return memoryService.joinMemory(member, inviteCode);
+        Response response = memoryService.joinMemory(member, inviteCode);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list")
-    public List<GetProjectListDto> getProjectList(){
-        return memoryService.getProjectList();
+    public ResponseEntity<List<GetProjectListDto>> getProjectList() {
+        List<GetProjectListDto> projectList = memoryService.getProjectList();
+        return ResponseEntity.ok(projectList);
     }
 
     @GetMapping("/member/list")
-    public List<GetProjectListDto> getProjectListByMember(
-        @CurrentUser Member member
-    ){
-        return memoryService.getProjectListByMember(member);
+    public ResponseEntity<List<GetProjectListDto>> getProjectListByMember(
+            @CurrentUser Member member
+    ) {
+        List<GetProjectListDto> projectList = memoryService.getProjectListByMember(member);
+        return ResponseEntity.ok(projectList);
+    }
+
+    @PostMapping("/auth")
+    public ResponseEntity<Boolean> checkAuthForUpdateMemory(
+            @CurrentUser Member member,
+            String roomId
+    ) {
+        Boolean auth = memoryService.checkAuthForUpdateMemory(member, roomId);
+        return ResponseEntity.ok(auth);
     }
 }
