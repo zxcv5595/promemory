@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GetProjectListDto {
 
-    private String room_id;
+    private String roomId;
     private String ProjectName;
     private String intro;
     private String mainImg;
@@ -28,7 +28,7 @@ public class GetProjectListDto {
                 .toList();
 
         return GetProjectListDto.builder()
-                .room_id(project.getMemory().getRoomId())
+                .roomId(project.getMemory().getRoomId())
                 .ProjectName(project.getName())
                 .intro(project.getIntro())
                 .mainImg(project.getMainImg())
