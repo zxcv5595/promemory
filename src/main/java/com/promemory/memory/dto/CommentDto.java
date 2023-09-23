@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CommentDto {
 
-    private String nickName;
+    private String nickname;
     private String comment;
     private LocalDateTime createdAt;
 
     public static CommentDto from(Comment comment){
         return CommentDto.builder()
-                .nickName(comment.getMember().getNickname())
+                .nickname(comment.getMember().getNickname())
                 .comment(comment.getComment())
                 .createdAt(comment.getCreatedAt())
                 .build();
